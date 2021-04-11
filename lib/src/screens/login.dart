@@ -78,9 +78,7 @@ class _LoginState extends State<Login> {
               return AppTextField(
                 isIOS: Platform.isIOS,
                 hintText: 'Difference in Millibar',
-                cupertinoIcon: IconData(0xf4c9,
-                    fontFamily: CupertinoIcons.iconFont,
-                    fontPackage: CupertinoIcons.iconFontPackage),
+                cupertinoIcon: CupertinoIcons.thermometer,
                 materialIcon: Icons.arrow_downward_rounded,
                 textInputType: TextInputType.number,
                 errorText: snapshot.error,
