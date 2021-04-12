@@ -41,15 +41,15 @@ class _ResultState extends State<Result> {
   Widget build(BuildContext context) {
     final authBloc = Provider.of<AuthBloc>(context);
     var logic = '''
-    if( initialPressure - currentPressure >= difference)
-    {
-      Then -> Person is laying down
-    }
-    else
-    {
-      Person is doing someother activity
-    }
-
+     if(initPressure >= currentPressure){
+     if (initPressure - currentPressure >= difference)
+            data: "Laying Down detected",
+        } else {
+    if (currentPressure - initPressure >= difference)
+            data: "Laying Down detected",
+        }
+      }
+    else {data: "Doing some other activity"}
                 ''';
 
     //  String password;
@@ -67,13 +67,15 @@ class _ResultState extends State<Result> {
           ? ListView(
               children: [
                 StreamBuilder<double>(
-                    stream: environmentSensors.pressure,
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) return CircularProgressIndicator();
-                      return SensorTile(
-                          data:
-                              'The Current Pressure is: ${snapshot.data.toStringAsFixed(4)}');
-                    }),
+                  stream: environmentSensors.pressure,
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) return CircularProgressIndicator();
+                    return SensorTile(
+                      data:
+                          'The Current Pressure is: ${snapshot.data.toStringAsFixed(4)}',
+                    );
+                  },
+                ),
                 StreamBuilder<String>(
                   stream: authBloc.email,
                   initialData: "Checking for data",
@@ -81,7 +83,8 @@ class _ResultState extends State<Result> {
                     if (!snapshot.hasData) return Text('Data Not available');
                     return Container(
                       child: SensorTile(
-                          data: "Initial Pressure is: ${snapshot.data} mbar"),
+                        data: "Initial Pressure is: ${snapshot.data} mbar",
+                      ),
                     );
                   },
                 ),
@@ -92,7 +95,8 @@ class _ResultState extends State<Result> {
                     if (!snapshot.hasData) return Text('Data Not available');
                     return Container(
                       child: SensorTile(
-                          data: "Set Difference is: ${snapshot.data} mbar"),
+                        data: "Set Difference is: ${snapshot.data} mbar",
+                      ),
                     );
                   },
                 ),
@@ -105,17 +109,29 @@ class _ResultState extends State<Result> {
                     var difference = double.parse(authBloc.initialDifference);
                     var currentPressure =
                         double.parse(snapshot.data.toStringAsFixed(4));
-                    if (initPressure - currentPressure >= difference)
+
+                    if(initPressure >= currentPressure){
+                      if (initPressure - currentPressure >= difference)
                       return Container(
                         child: SensorTile(
                           data: "Laying Down detected",
                           present: false,
                         ),
                       );
+                    }else{
+                      if (currentPressure - initPressure >= difference)
+                      return Container(
+                        child: SensorTile(
+                          data: "Laying Down detected",
+                          present: false,
+                        ),
+                      );
+                    }
                     return Container(
                       child: SensorTile(
-                          data:
-                              "Current Difference = ${initPressure - currentPressure} mbar"),
+                        data:
+                            "Current Difference = ${initPressure - currentPressure} mbar",
+                      ),
                     );
                   },
                 ),
@@ -123,12 +139,18 @@ class _ResultState extends State<Result> {
                   height: 20,
                 ),
                 Center(
-                    child: Text("Logic",
-                        style: TextStyles.title.copyWith(fontSize: 24))),
+                  child: Text(
+                    "Logic",
+                    style: TextStyles.title.copyWith(fontSize: 24),
+                  ),
+                ),
                 SizedBox(
                   height: 30,
                 ),
-                Text(logic, style: TextStyles.body.copyWith(fontSize: 14))
+                Text(
+                  logic,
+                  style: TextStyles.body.copyWith(fontSize: 14),
+                ),
               ],
             )
           : Center(
